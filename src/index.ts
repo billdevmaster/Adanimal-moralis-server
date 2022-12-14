@@ -42,6 +42,7 @@ app.post("/webhook", async (req, res) => {
     /* Your code to update the database here */    
     console.log(req.body.logs.length)
     for (let i = 0; i < req.body.logs.length; i++) {
+      console.log(i)
       const abi = req.body.abis[req.body.logs[i].streamId] ? req.body.abis[req.body.logs[i].streamId] : req.body.abi;
       console.log(abi)
       if (abi) {
