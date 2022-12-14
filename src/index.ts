@@ -40,6 +40,7 @@ app.post("/webhook", async (req, res) => {
       signature
     });
     /* Your code to update the database here */    
+    console.log(req.body.logs)
     for (const log of req.body.logs) {
       const abi = req.body.abis[log.streamId];
       if (abi) {
