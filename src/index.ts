@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import config from './config';
 import { parseServer } from './parseServer';
+import { realtimeUpsertParams } from './utils'
 
 // @ts-ignore
 import ParseServer from 'parse-server';
@@ -39,8 +40,14 @@ app.post("/webhook", async (req, res) => {
       signature
     });
     /* Your code to update the database here */    
-    console.log(req.body)
-
+    for (const log of req.body.logs) {
+      const abi = req.body.abis[log.streamId];
+      if (abi) {
+        const { filter, update } = realtimeUpsertParams(abi, log, req.body.confirmed, req.body.block);
+        console.log(filter)
+        console.log(update)
+      }
+    }
     return res.status(200).json();
   } catch (e) {
     return res.status(400).json();

@@ -6,6 +6,7 @@ module.exports = {
   },
   "rules": {
     "eqeqeq": "off",
-    "no-console": "off"
+    "no-console": "off",
+    "prefer-destructuring": ["error", {"object": false, "array": false}]
   }
 };
