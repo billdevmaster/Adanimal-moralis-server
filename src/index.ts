@@ -33,15 +33,14 @@ app.use(`/server`, parseServer.app);
 app.post("/webhook", async (req, res) => {
   const { body, headers } = req;
   const signature = headers["x-signature"] ? headers["x-signature"].toString() : "";
-  console.log(signature)
-
   try {
     Moralis.Streams.verifySignature({
       body,
       signature
     });
-    
     /* Your code to update the database here */    
+    console.log(req.body)
+
     return res.status(200).json();
   } catch (e) {
     return res.status(400).json();
