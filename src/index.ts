@@ -40,10 +40,9 @@ app.post("/webhook", async (req, res) => {
       signature
     });
     /* Your code to update the database here */    
-    console.log(req.body.abis)
-    console.log(req.body.abi)
     for (const log of req.body.logs) {
-      const abi = req.body.abis[log.streamId];
+      const abi = req.body.abis[log.streamId] ? req.body.abis[log.streamId] : req.body.abi;
+      console.log(abi)
       if (abi) {
         const { filter, update } = realtimeUpsertParams(abi, log, req.body.confirmed, req.body.block);
         console.log(filter)
