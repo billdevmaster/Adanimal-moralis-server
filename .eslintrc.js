@@ -4,4 +4,8 @@ module.exports = {
   env: {
     browser: true,
   },
+  "rules": {
+    "eqeqeq": "off",
+    "no-console": "off"
+  }
 };
