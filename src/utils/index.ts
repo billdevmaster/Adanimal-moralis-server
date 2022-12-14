@@ -7,7 +7,7 @@ export const realtimeUpsertParams = (abi: any, trxData: any, confirmed: any, blo
   const log_index = trxData.logIndex;
   const topics = [trxData.topic0, trxData.topic1, trxData.topic2, trxData.topic3];
   const data = trxData.data;
-
+	console.log(data)
   const filter = {
       transaction_hash,
       log_index,
@@ -20,7 +20,7 @@ export const realtimeUpsertParams = (abi: any, trxData: any, confirmed: any, blo
   };
 
   rest.confirmed = confirmed;
-
+  console.log(abi)
   if (abi) {
       const update = {
           ...filter,
