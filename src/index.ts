@@ -48,6 +48,10 @@ app.post("/webhook", async (req, res) => {
         const { filter, update } = realtimeUpsertParams(abi, log, req.body.confirmed, req.body.block);
         console.log(filter)
         console.log(update)
+      } else {
+        const { filter, update } = realtimeUpsertParams(req.body.abi, log, req.body.confirmed, req.body.block);
+        console.log(filter)
+        console.log(update)
       }
     }
     return res.status(200).json();
