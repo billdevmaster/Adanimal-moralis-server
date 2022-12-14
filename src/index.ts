@@ -41,19 +41,20 @@ app.post("/webhook", async (req, res) => {
     });
     /* Your code to update the database here */    
     console.log(req.body.logs.length)
-    for (const log of req.body.logs) {
-      const abi = req.body.abis[log.streamId] ? req.body.abis[log.streamId] : req.body.abi;
+    for (let i = 0; i < req.body.logs.length; i++) {
+      const abi = req.body.abis[req.body.logs[i].streamId] ? req.body.abis[req.body.logs[i].streamId] : req.body.abi;
       console.log(abi)
       if (abi) {
-        const { filter, update } = realtimeUpsertParams(abi, log, req.body.confirmed, req.body.block);
+        const { filter, update } = realtimeUpsertParams(abi, req.body.logs[i], req.body.confirmed, req.body.block);
         console.log(filter)
         console.log(update)
       } else {
-        const { filter, update } = realtimeUpsertParams(req.body.abi, log, req.body.confirmed, req.body.block);
+        const { filter, update } = realtimeUpsertParams(req.body.abi, req.body.logs[i], req.body.confirmed, req.body.block);
         console.log(filter)
         console.log(update)
       }
     }
+
     return res.status(200).json();
   } catch (e) {
     return res.status(400).json();
