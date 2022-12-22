@@ -1,4 +1,4 @@
-import ethers from 'ethers';
+import { ethers } from 'ethers';
 
 export const realtimeUpsertParams = (abi: any, trxData: any, confirmed: any, block: any) => {
   const block_number = block.number;
@@ -7,8 +7,8 @@ export const realtimeUpsertParams = (abi: any, trxData: any, confirmed: any, blo
   const log_index = trxData.logIndex;
   const topics = [trxData.topic0, trxData.topic1, trxData.topic2, trxData.topic3];
   const data = trxData.data;
-	console.log(data)
-  const filter = {
+
+	const filter = {
       transaction_hash,
       log_index,
   };
@@ -20,14 +20,14 @@ export const realtimeUpsertParams = (abi: any, trxData: any, confirmed: any, blo
   };
 
   rest.confirmed = confirmed;
-  console.log(abi)
+	const {eventName, decoded} = decodeWithEthers(abi, data, topics.filter((t: any) => t !== null));
   if (abi) {
       const update = {
           ...filter,
-          ...decodeWithEthers(abi, data, topics.filter((t: any) => t !== null)),
+          ...decoded,
           ...rest,
       };
-      return { filter, update };
+      return { filter, update, eventName };
   }
 
   const update = {
@@ -40,7 +40,7 @@ export const realtimeUpsertParams = (abi: any, trxData: any, confirmed: any, blo
       topic3: topics[3],
   };
 
-  return { filter, update };
+  return { filter, update, eventName };
 }
 
 export const decodeWithEthers = (abi: any, data: any, topics: any) => {
@@ -48,22 +48,27 @@ export const decodeWithEthers = (abi: any, data: any, topics: any) => {
       const iface = new ethers.utils.Interface(abi);
       const { args } = iface.parseLog({ data, topics});
       const event = iface.getEvent(topics[0]);
+			const eventName = event.name;
       const decoded: any = {};
       event.inputs.forEach((input, index) => {
           if (input.type === "uint256") {
-            const name = `${input.name}_decimal`;
-            decoded[name] = {
-                __type: "NumberDecimal",
-                value: ethers.BigNumber.from(args[index]._hex).toString()
-            };
             decoded[input.name] = ethers.BigNumber.from(args[index]._hex).toString();
             return;
           }
+					if(input.type === "bytes") {
+						decoded[input.name] = args[index].hash                        
+						return;
+					}
+					if(input.type === "address") {
+						decoded[input.name] = args[index].toLowerCase()
+						return;
+					}
           decoded[input.name] = args[index];
       });
       
-      return decoded;
+      return {decoded, eventName};
   } catch (error) {
-      return {};
+		console.log(error)
+		return {decoded: {}, eventName: ''};
   }
 }

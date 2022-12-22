@@ -1,15 +1,16 @@
 import Moralis from 'moralis';
 import express from 'express';
+import mongoose from 'mongoose';
 import cors from 'cors';
 import config from './config';
 import { parseServer } from './parseServer';
-import { realtimeUpsertParams } from './utils'
+
+import { streamRoute } from './routes';
 
 // @ts-ignore
 import ParseServer from 'parse-server';
 import http from 'http';
 import ngrok from 'ngrok';
-import { streamsSync } from '@moralisweb3/parse-server';
 
 export const app = express();
 
@@ -17,51 +18,19 @@ Moralis.start({
   apiKey: config.MORALIS_API_KEY,
 });
 
+mongoose.connect(config.DATABASE_URI, () => {
+  console.log("connected to database")
+})
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(cors());
 
-app.use(
-  streamsSync(parseServer, {
-    apiKey: config.MORALIS_API_KEY,
-    webhookUrl: '/streams',
-  }),
-);
-
 app.use(`/server`, parseServer.app);
 
-app.post("/webhook", async (req, res) => {
-  const { body, headers } = req;
-  const signature = headers["x-signature"] ? headers["x-signature"].toString() : "";
-  try {
-    Moralis.Streams.verifySignature({
-      body,
-      signature
-    });
-    /* Your code to update the database here */    
-    console.log(req.body.logs.length)
-    for (let i = 0; i < req.body.logs.length; i++) {
-      console.log(i)
-      const abi = req.body.abi[0];
-      console.log(abi)
-      if (abi) {
-        const { filter, update } = realtimeUpsertParams(abi, req.body.logs[i], req.body.confirmed, req.body.block);
-        console.log(filter)
-        console.log(update)
-      } else {
-        const { filter, update } = realtimeUpsertParams(req.body.abi, req.body.logs[i], req.body.confirmed, req.body.block);
-        console.log(filter)
-        console.log(update)
-      }
-    }
+app.use('/webhook', streamRoute);
 
-    return res.status(200).json();
-  } catch (e) {
-    console.log(e)
-    return res.status(400).json();
-  }
-});
 
 // app.post('/webhooks/test', async (req: any, res: any) => {
 //   // eslint-disable-next-line no-console
