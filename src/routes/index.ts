@@ -12,3 +12,4 @@ streamRoute.post("/erc1155NFTTransfer", streamCtrl.erc1155NFTTransfer);
 export const ApiRoute = Router();
 
 ApiRoute.post("/setPodMerkletree", podMerkleCtrl.setPodMerkletree)
+ApiRoute.post("/getPodMerkletree", podMerkleCtrl.getPodMerkletree)

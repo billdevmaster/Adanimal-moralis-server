@@ -21,6 +21,12 @@ const setPodMerkletree = async (req: any, res: any) => {
 	res.json({ merkleRoot });
 }
 
+const getPodMerkletree = async (req: any, res: any) => { 
+	const whiteList = await PodWhiteList.findOne({address: req.body.address});
+  res.json(whiteList);
+}
+
 export default {
-	setPodMerkletree
+	setPodMerkletree,
+	getPodMerkletree
 }
