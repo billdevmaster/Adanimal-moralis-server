@@ -11,6 +11,7 @@
     "@types/cors": "^2.8.13",
     "@types/node": "^18.7.15",
     "@types/node-fetch": "^2.6.2",
+    "@types/uuid": "^9.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "envalid": "7.3.1",
@@ -26,6 +27,8 @@
     "ngrok": "^4.3.3",
     "node-fetch": "^3.3.0",
     "parse-server": "^5.2.7",
+    "pure-rand": "^5.0.5",
+    "uuid": "^8.3.2",
     "web3": "^1.8.1"
   },
   "devDependencies": {

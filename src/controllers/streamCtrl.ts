@@ -14,6 +14,7 @@ import { MarketplaceListed } from '../models/MarketplaceListed';
 import { MarketplaceSale } from '../models/MarketplaceSale';
 import { ERC1155NFTTransfer } from '../models/ERC1155NFTTransfer';
 import { ERC1155NFTMetadata } from '../models/ERC1155NFTMetadata';
+import { ItemReward } from '../models/ItemReward';
 
 const ERC1155ABI: any = [
   {
@@ -389,9 +390,43 @@ const erc1155NFTTransfer = async (req: Request, res: Response) => {
   }
 }
 
+const claimReward = async (req: Request, res: Response) => {
+  try {
+    const { body, headers } = req;
+    const signature = headers["x-signature"] ? headers["x-signature"].toString() : "";
+    Moralis.Streams.verifySignature({
+      body,
+      signature
+    });
+    for (let i = 0; i < req.body.logs.length; i++) {
+      const abi = req.body.abi;
+      const { filter, update } = realtimeUpsertParams(abi, req.body.logs[i], req.body.confirmed, req.body.block);
+      const txQuery = { transactionHash: filter.transaction_hash, chainId: body.chainId };
+      const txUpdate = {
+        $set: {
+          chainId: body.chainId,
+          transactionHash: filter.transaction_hash,
+          tokenAddress: update.tokenAddress,
+          tokenId: update.tokenId,
+          lootboxId: update.lootboxId,
+          recipient: update.recipient,
+          contractAddress: update.address,
+          confirmed: update.confirmed
+        }
+      }
+      await ItemReward.updateOne(txQuery, txUpdate, {upsert: true});
+    }
+    return res.status(200).json();
+  } catch (e) {
+    console.log(e)
+    return res.status(400).json();
+  }
+}
+
 export default { 
   ERC721NftTransferCtrl,
   styleKampNFTWithERC1155,
   marketplaceItemListed,
-  erc1155NFTTransfer
+  erc1155NFTTransfer,
+  claimReward
 };
