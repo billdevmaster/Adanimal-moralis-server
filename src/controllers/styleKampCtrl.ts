@@ -1,5 +1,5 @@
 
-import { StyleKampEvent } from '../models/stylekampEvent';
+import { StyleKampEvent } from '../models/StylekampEvent';
 import { StyleKampNutritionHistory } from '../models/StyleKampNutritionHistory'
 
 const setStartTime = async (req: any, res: any) => {
