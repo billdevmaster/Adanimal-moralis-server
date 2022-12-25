@@ -52,10 +52,12 @@ const ERC721NftTransferCtrl = async (req: Request, res: Response) => {
       const abi = req.body.abi;
       const { filter, update } = realtimeUpsertParams(abi, req.body.logs[i], req.body.confirmed, req.body.block);
       // save transaction
-      const txQuery = { transactionHash: filter.transaction_hash };
+      const txQuery = { chainId: body.chainId, transactionHash: filter.transaction_hash, logIndex: filter.log_index };
       const txUpdate = {
         $set: {
+          chainId: body.chainId,
           transactionHash: filter.transaction_hash,
+          logIndex: filter.log_index,
           nftAddress: update.address,
           tokenId: update.tokenId,
           from: update.from,
@@ -150,14 +152,15 @@ const styleKampNFTWithERC1155 = async (req: Request, res: Response) => {
       const abi = req.body.abi;
       const { filter, update } = realtimeUpsertParams(abi, req.body.logs[i], req.body.confirmed, req.body.block);
       // save transaction
-      const txQuery = { transactionHash: filter.transaction_hash, chainId: body.chainId };
+      const txQuery = { transactionHash: filter.transaction_hash, chainId: body.chainId, logIndex: filter.log_index };
       const txUpdate = {
         $set: {
+          chainId: body.chainId,
           transactionHash: filter.transaction_hash,
+          logIndex: filter.log_index,
           feeder: update.feeder,
           kampNftId: update.podNftId,
           styleTokenType: update.itemType,
-          chainId: body.chainId,
           styleTokenAddress: update.itemNftAddress,
           styleTokenId: "",
           styleTokenWeight: parseFloat(update.weight),
@@ -196,12 +199,14 @@ const marketplaceItemListed = async (req: Request, res: Response) => {
     for (let i = 0; i < req.body.logs.length; i++) {
       const abi = req.body.abi;
       const { filter, update, eventName } = realtimeUpsertParams(abi, req.body.logs[i], req.body.confirmed, req.body.block);
+      console.log(filter)
       if (eventName === 'ItemListed') {
-        const listedQuery = { transactionHash: filter.transaction_hash, chainId: body.chainId };
+        const listedQuery = { transactionHash: filter.transaction_hash, chainId: body.chainId, logIndex: filter.log_index };
         const listedUpdate = {
           $set: {
             chainId: body.chainId,
             transactionHash: filter.transaction_hash,
+            logIndex: filter.log_index,
             listingId: update.listingId,
             nftAddress: update.nftAddress,
             tokenId: update.tokenId,
@@ -224,11 +229,12 @@ const marketplaceItemListed = async (req: Request, res: Response) => {
         }
         await MarketplaceListed.updateOne(cancelQuery, cancelUpdate, {upsert: true});
       } else if (eventName === 'ItemBought') {
-        const saleQuery = { transactionHash: filter.transaction_hash, chainId: body.chainId };
+        const saleQuery = { transactionHash: filter.transaction_hash, chainId: body.chainId, logIndex: filter.log_index };
         const saleUpdate = {
           $set: {
             chainId: body.chainId,
             transactionHash: filter.transaction_hash,
+            logIndex: filter.log_index,
             listingId: update.listingId,
             nftAddress: update.nftAddress,
             tokenId: update.tokenId,
@@ -271,11 +277,12 @@ const erc1155NFTTransfer = async (req: Request, res: Response) => {
       const abi = req.body.abi;
       const { filter, update, eventName } = realtimeUpsertParams(abi, req.body.logs[i], req.body.confirmed, req.body.block);
       if (eventName === 'TransferSingle') {
-        const transferQuery = {chainId: body.chainId, transactionHash: filter.transaction_hash};
+        const transferQuery = {chainId: body.chainId, transactionHash: filter.transaction_hash, logIndex: filter.log_index};
         const transferUpdate = {
           $set: {
             chainId: body.chainId,
             transactionHash: filter.transaction_hash,
+            logIndex: filter.log_index,
             nftAddress: update.address,
             tokenId: update.id,
             operator: update.operator,
@@ -288,50 +295,34 @@ const erc1155NFTTransfer = async (req: Request, res: Response) => {
         await ERC1155NFTTransfer.updateOne(transferQuery, transferUpdate, {upsert: true});
 
         // save metadata
-        const savedOne = await ERC1155NFTMetadata.findOne({chainId: body.chainId, lastTransactionHash: filter.transaction_hash});
+        const savedOne = await ERC1155NFTMetadata.findOne({ chainId: body.chainId, nftAddress: update.address, tokenId: update.id });
         if (!savedOne) {
-          // detect send
-          const sendnft = await ERC1155NFTMetadata.findOne({nftAddress: update.address, tokenId: update.id, owner: update.from});
-          const receivenft = await ERC1155NFTMetadata.findOne({nftAddress: update.address, tokenId: update.id, owner: update.to});
-          if (sendnft) {
-            // case of minus
-            sendnft.amount -= parseInt(update.value);
-            sendnft.lastTransactionHash = filter.transaction_hash;
-            await sendnft.save();
-          } else if (receivenft) {
-            // case of plus
-            receivenft.amount += parseInt(update.value);
-            receivenft.lastTransactionHash = filter.transaction_hash;
-            await receivenft.save();
-          } else {
-            const metadata = new ERC1155NFTMetadata();
-            metadata.chainId = body.chainId;
-            metadata.owner = update.to;
-            metadata.nftAddress = update.address;
-            metadata.tokenId = update.id;
-            metadata.amount = parseInt(update.value);
-            
-            const provider = new Web3.providers.HttpProvider(
-              Constant.PROVIDERS[parseInt(body.chainId, 16).toString()]
-            );
-            const web3 = new Web3(provider);
-            const Erc1155Contract = new web3.eth.Contract(ERC1155ABI, update.address)
+          const metadata = new ERC1155NFTMetadata();
+          metadata.chainId = body.chainId;
+          metadata.owner = update.to;
+          metadata.nftAddress = update.address;
+          metadata.tokenId = update.id;
+          
+          const provider = new Web3.providers.HttpProvider(
+            Constant.PROVIDERS[parseInt(body.chainId, 16).toString()]
+          );
+          const web3 = new Web3(provider);
+          const Erc1155Contract = new web3.eth.Contract(ERC1155ABI, update.address)
 
-            const tokenUri = await Erc1155Contract.methods.uri(update.id).call();
-            metadata.tokenUri = tokenUri;
-            const metadataRet: any = await Axios.get(tokenUri);
-            metadata.image = metadataRet.data.image;
-            metadata.lastTransactionHash = filter.transaction_hash;
-            await metadata.save();
-          }
+          const tokenUri = await Erc1155Contract.methods.uri(update.id).call();
+          metadata.tokenUri = tokenUri;
+          const metadataRet: any = await Axios.get(tokenUri);
+          metadata.image = metadataRet.data.image;
+          await metadata.save();
         }
       } else {
         await Promise.all(update.ids.map(async (id: any, index: any) => {
-          const transferQuery = {chainId: body.chainId, transactionHash: filter.transaction_hash};
+          const transferQuery = {chainId: body.chainId, transactionHash: filter.transaction_hash, logIndex: filter.log_index};
           const transferUpdate = {
             $set: {
               chainId: body.chainId,
               transactionHash: filter.transaction_hash,
+              logIndex: filter.log_index,
               nftAddress: update.address,
               tokenId: id,
               operator: update.operator,
@@ -343,42 +334,26 @@ const erc1155NFTTransfer = async (req: Request, res: Response) => {
           };
           await ERC1155NFTTransfer.updateOne(transferQuery, transferUpdate, { upsert: true });
           // save metadata
-          const savedOne = await ERC1155NFTMetadata.findOne({chainId: body.chainId, lastTransactionHash: filter.transaction_hash});
+          const savedOne = await ERC1155NFTMetadata.findOne({chainId: body.chainId, nftAddress: update.address, tokenId: id});
           if (!savedOne) {
-            // detect send
-            const sendnft = await ERC1155NFTMetadata.findOne({ nftAddress: update.address, tokenId: id, owner: update.from });
-            const receivenft = await ERC1155NFTMetadata.findOne({ nftAddress: update.address, tokenId: id, owner: update.to });
-            if (sendnft) {
-              // case of minus
-              sendnft.amount -= parseInt(update.values[index]);
-              sendnft.lastTransactionHash = filter.transaction_hash;
-              await sendnft.save();
-            } else if (receivenft) {
-              // case of plus
-              receivenft.amount += parseInt(update.values[index]);
-              receivenft.lastTransactionHash = filter.transaction_hash;
-              await receivenft.save();
-            } else {
-              const metadata = new ERC1155NFTMetadata();
-              metadata.chainId = body.chainId;
-              metadata.owner = update.to;
-              metadata.nftAddress = update.address;
-              metadata.tokenId = id;
-              metadata.amount = parseInt(update.values[index]);
-              
-              const provider = new Web3.providers.HttpProvider(
-                Constant.PROVIDERS[parseInt(body.chainId, 16).toString()]
-              );
-              const web3 = new Web3(provider);
-              const Erc1155Contract = new web3.eth.Contract(ERC1155ABI, update.address)
+            const metadata = new ERC1155NFTMetadata();
+            metadata.chainId = body.chainId;
+            metadata.owner = update.to;
+            metadata.nftAddress = update.address;
+            metadata.tokenId = id;
+            
+            const provider = new Web3.providers.HttpProvider(
+              Constant.PROVIDERS[parseInt(body.chainId, 16).toString()]
+            );
+            const web3 = new Web3(provider);
+            const Erc1155Contract = new web3.eth.Contract(ERC1155ABI, update.address)
 
-              const tokenUri = await Erc1155Contract.methods.uri(id).call();
-              metadata.tokenUri = tokenUri;
-              const metadataRet: any = await Axios.get(tokenUri);
-              metadata.image = metadataRet.data.image;
-              metadata.lastTransactionHash = filter.transaction_hash;
-              await metadata.save();
-            }
+            const tokenUri = await Erc1155Contract.methods.uri(id).call();
+            metadata.tokenUri = tokenUri;
+            const metadataRet: any = await Axios.get(tokenUri);
+            console.log(metadataRet)
+            metadata.image = metadataRet.data.image;
+            await metadata.save();
           }
         }))
       }
@@ -401,11 +376,12 @@ const claimReward = async (req: Request, res: Response) => {
     for (let i = 0; i < req.body.logs.length; i++) {
       const abi = req.body.abi;
       const { filter, update } = realtimeUpsertParams(abi, req.body.logs[i], req.body.confirmed, req.body.block);
-      const txQuery = { transactionHash: filter.transaction_hash, chainId: body.chainId };
+      const txQuery = { transactionHash: filter.transaction_hash, chainId: body.chainId, logIndex: filter.log_index };
       const txUpdate = {
         $set: {
           chainId: body.chainId,
           transactionHash: filter.transaction_hash,
+          logIndex: filter.log_index,
           tokenAddress: update.tokenAddress,
           tokenId: update.tokenId,
           lootboxId: update.lootboxId,

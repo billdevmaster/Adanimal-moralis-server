@@ -9,6 +9,10 @@ const ERC1155NFTTransferSchema = new mongoose.Schema({
     required: true,
     type: String
   },
+  logIndex: {
+    required: true,
+    type: String
+  },
   nftAddress: {
     required: true,
     type: String

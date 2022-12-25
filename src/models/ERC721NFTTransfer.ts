@@ -1,7 +1,15 @@
 import mongoose from 'mongoose';
 
 const ERC721NFTTransferSchema = new mongoose.Schema({
+  chainId: {
+    required: true,
+    type: String
+  },
   transactionHash: {
+    required: true,
+    type: String
+  },
+  logIndex: {
     required: true,
     type: String
   },

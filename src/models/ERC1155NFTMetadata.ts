@@ -17,17 +17,10 @@ const ERC1155NFTMetadataSchema = new mongoose.Schema({
     required: true,
     type: String
   },
-  amount: {
-    required: true,
-    type: Number
-  },
   tokenUri: {
     type: String
   },
   image: {
-    type: String
-  },
-  lastTransactionHash: {
     type: String
   },
 }, {timestamps: true});

@@ -9,6 +9,10 @@ const MarketplaceSaleSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
+  logIndex: {
+    required: true,
+    type: String,
+  },
   listingId: {
     required: true,
     type: Number

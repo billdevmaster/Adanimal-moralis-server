@@ -9,6 +9,10 @@ const ItemRewardSchema = new mongoose.Schema({
     require: true,
     type: String
   },
+  logIndex: {
+    required: true,
+    type: String,
+  },
   recipient: {
     required: true,
     type: String

@@ -1,7 +1,15 @@
 import mongoose from 'mongoose';
 
 const StyleKampNutritionHistorySchema = new mongoose.Schema({
+  chainId: {
+    required: true,
+    type: String
+  },
   transactionHash: {
+    required: true,
+    type: String,
+  },
+  logIndex: {
     required: true,
     type: String,
   },
@@ -17,10 +25,7 @@ const StyleKampNutritionHistorySchema = new mongoose.Schema({
     required: true,
     type: String
   },
-  chainId: {
-    required: true,
-    type: String
-  },
+  
   styleTokenAddress: {
     required: true,
     type: String

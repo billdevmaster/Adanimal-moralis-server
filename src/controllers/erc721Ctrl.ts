@@ -58,7 +58,9 @@ const getNkMainNfts = async (req: any, res: any) => {
 
 		pipeline.splice(pipeline.length - 1, 1);
 		if (sort != undefined) {
-			pipeline.push({ "$sort": { sort: sortDir } });
+			const sortOption: any = {}
+      sortOption[sort] = sortDir;
+			pipeline.push({ "$sort": sortOption });
 		}
 		if (skip != undefined) {
 			pipeline.push({ "$skip": skip });
