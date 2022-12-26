@@ -33,3 +33,8 @@ ApiRoute.post("/styleKamp/getKampRankList", StyleKampCtrl.getKampRankList);
 
 ApiRoute.post("/lootbox/setLoot", LootboxCtrl.setLoot);
 ApiRoute.get("/lootbox/openLootbox", LootboxCtrl.openLootbox);
+
+export const GameApiRoute = Router();
+GameApiRoute.post("/saveItems", KampCtrl.saveItems);
+GameApiRoute.post("/loadKamp", KampCtrl.loadKamp);
+GameApiRoute.post("/getKampList", KampCtrl.getKampList);

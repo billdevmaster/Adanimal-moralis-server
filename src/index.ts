@@ -5,7 +5,7 @@ import cors from 'cors';
 import config from './config';
 import { parseServer } from './parseServer';
 
-import { streamRoute, ApiRoute } from './routes';
+import { streamRoute, ApiRoute, GameApiRoute } from './routes';
 
 // @ts-ignore
 import ParseServer from 'parse-server';
@@ -30,7 +30,8 @@ app.use(cors());
 app.use(`/server`, parseServer.app);
 
 app.use('/webhook', streamRoute);
-app.use('/api', ApiRoute)
+app.use('/api', ApiRoute);
+app.use('/game-api', GameApiRoute);
 
 
 // app.post('/webhooks/test', async (req: any, res: any) => {
