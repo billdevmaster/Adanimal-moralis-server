@@ -92,7 +92,7 @@ const getKampList = async (req: any, res: any) => {
 	try {
 		const { address } = req.body;
 	
-		const kamps = await KampNFTMetadata.find({owner: address});
+		const kamps = await KampNFTMetadata.find({owner: address.toLowerCase()});
 		res.status(200).json({message: '', result: '', "kamps": kamps});
 	} catch (e) {
 		console.log(e)
