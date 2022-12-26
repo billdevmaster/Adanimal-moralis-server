@@ -69,7 +69,7 @@ const saveItems = async (req: any, res: any) => {
 const loadKamp = async (req: any, res: any) => { 
 	try { 
 		const { address, kampId } = req.body;
-		const user = await User.findOne({ethAddress: address});
+		const user = await User.findOne({ethAddress: address.toLowerCase()});
 
     if (user === null) {
         res.status(404).json({message: '', result: ''});
