@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import streamCtrl from '../controllers/streamCtrl';
 import podMerkleCtrl from '../controllers/podMerkleCtrl';
-import UserCtrl from '../controllers/userCtrl';
 import Erc721Ctrl from '../controllers/erc721Ctrl';
 import Erc1155Ctrl from '../controllers/erc1155Ctrl';
 import KampCtrl from '../controllers/kampCtrl';
@@ -20,7 +19,6 @@ export const ApiRoute = Router();
 ApiRoute.post("/setPodMerkletree", podMerkleCtrl.setPodMerkletree)
 ApiRoute.post("/getPodMerkletree", podMerkleCtrl.getPodMerkletree)
 
-ApiRoute.post("/getUser", UserCtrl.getUser);
 ApiRoute.post("/getNkMainNfts", Erc721Ctrl.getNkMainNfts);
 ApiRoute.post("/getKampNfts", KampCtrl.getKampNfts);
 ApiRoute.post("/getErc1155Nfts", Erc1155Ctrl.getErc1155Nfts);

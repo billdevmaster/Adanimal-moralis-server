@@ -26,6 +26,10 @@ const KampNFTMetadataSchema = new mongoose.Schema({
   image: {
     type: String
   },
+  items: {
+    require: true,
+    type: Array
+  }
 }, {timestamps: true});
 
 const KampNFTMetadata = mongoose.model('KampNFTMetadata', KampNFTMetadataSchema);
