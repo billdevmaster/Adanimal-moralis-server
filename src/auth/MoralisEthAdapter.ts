@@ -5,7 +5,8 @@ import Moralis from 'moralis';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function validateAuthData(authData: any) {
   const { signature, data } = authData;
-
+  console.log(signature)
+  console.log(data)
   return Moralis.Auth.verify({
     message: data,
     signature,
