@@ -109,5 +109,6 @@ const getErc1155Nfts = async (req: any, res: any) => {
 }
 
 export default {
-	getErc1155Nfts
+  getErc1155Nfts,
+  
 }

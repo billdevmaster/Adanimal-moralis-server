@@ -23,6 +23,7 @@ ApiRoute.post("/getNkMainNfts", Erc721Ctrl.getNkMainNfts);
 ApiRoute.post("/getKampNfts", KampCtrl.getKampNfts);
 ApiRoute.post("/getErc1155Nfts", Erc1155Ctrl.getErc1155Nfts);
 ApiRoute.post("/getListedItems", MarketplaceCtrl.getListedItems);
+ApiRoute.post("/getTotalListedAmount", MarketplaceCtrl.getTotalListedAmount);
 
 ApiRoute.post("/styleKamp/setStartTime", StyleKampCtrl.setStartTime);
 ApiRoute.get("/styleKamp/getStartTime", StyleKampCtrl.getStartTime);

@@ -4,7 +4,48 @@ import { User } from '../models/_User';
 const getKampNfts = async (req: any, res: any) => { 
   try {
     const { skip, limit, sort, sortDir, owner, tokenId } = req.body;
-    const pipeline: any = [];
+		const pipeline: any = [
+			{
+				$lookup: {
+					from: "marketplacelisteds",
+					let: { nftAddress: "$nftAddress", tokenId: "$tokenId" },
+					pipeline: [
+						{
+							$match: {
+								$expr:
+									{ $and:
+										[
+											{ $eq: ["$$tokenId", "$tokenId" ] },
+											{ $eq: ["$$nftAddress", "$nftAddress"] },
+										]
+									}
+							}
+						},
+						{
+							$match: {
+								"completed": false
+							}
+						},
+						{
+							$project: {
+								"seller": 1,
+								"price": 1,
+								"currency": 1,
+								"nftType": 1,
+								"listingId": 1
+							}
+						},
+					],
+					as: 'listedNft'
+				}
+			},
+			{
+				$unwind: {
+					"path": "$listedNft",
+					"preserveNullAndEmptyArrays": true
+				}
+			},
+		];
     if (owner) {
 			let match: any = {};
 			match = { owner };

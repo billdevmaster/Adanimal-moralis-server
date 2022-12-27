@@ -46,6 +46,64 @@ const getListedItems = async (req: any, res: any) => {
   }
 }
 
+const getTotalListedAmount = async (req: any, res: any) => {
+  try {
+    const { nftAddress, tokenId, seller } = req.body;
+    const pipeline: any = [
+      {
+        $match: {
+          nftAddress,
+          tokenId,
+          seller,
+          completed: false
+        }
+      },
+      {
+        $lookup: {
+          from: "marketplacesales",
+          let: { listingId: "$listingId" },
+          pipeline: [
+            {
+              $match: {
+                $expr:
+                  { $and:
+                    [
+                      { $eq: ["$$listingId", "$listingId" ] },
+                    ]
+                  }
+                
+              }
+            },
+            {
+              $group: {
+                "_id": {listingId: "$listingId"},
+                "amount": {$sum: {"$toDouble": "$amount"}},
+              }
+            },
+          ],
+          as: 'totalSold'
+        }
+      },
+      {$unwind: {
+        "path": "$totalSold",
+        "preserveNullAndEmptyArrays": true
+      }},
+      {
+        $project: {
+          amount: 1,
+          totalSold: 1
+        }
+      },
+    ];
+    const retData = await MarketplaceListed.aggregate(pipeline);
+    return res.status(200).json({ status: "success", data: retData });
+  } catch (e) {
+    console.log(e)
+		return res.status(400).json({status: "failed"})
+  }
+}
+
 export default {
-	getListedItems
+  getListedItems,
+  getTotalListedAmount
 }
