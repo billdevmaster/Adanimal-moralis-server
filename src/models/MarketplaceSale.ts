@@ -37,7 +37,7 @@ const MarketplaceSaleSchema = new mongoose.Schema({
     type: Number
   },
   price: {
-    type: Number
+    type: String
   },
   confirmed: {
     type: Boolean

@@ -37,7 +37,7 @@ const MarketplaceListedSchema = new mongoose.Schema({
     type: String
   },
   price: {
-    type: Number
+    type: String
   },
   nftType: {
     type: String
