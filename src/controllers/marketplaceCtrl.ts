@@ -6,7 +6,37 @@ const getListedItems = async (req: any, res: any) => {
     const pipeline: any = [
       {
         $match: {completed: false}
-      }
+      },
+      {
+        $lookup: {
+          from: "marketplacesales",
+          let: { listingId: "$listingId" },
+          pipeline: [
+              {
+                  $match: {
+                      $expr:
+                          { $and:
+                              [
+                                  { $eq: ["$$listingId", "$listingId" ] },
+                              ]
+                          }
+                      
+                  }
+              },
+              {
+                  $group: {
+                      "_id": {listingId: "$listingId"},
+                      "amount": {$sum: {"$toDouble": "$amount"}},
+                  }
+              },
+          ],
+          as: 'totalSale'
+        }
+    },
+    {$unwind: {
+        "path": "$totalSale",
+        "preserveNullAndEmptyArrays": true
+    }},
     ]
 
     if (seller != '') {

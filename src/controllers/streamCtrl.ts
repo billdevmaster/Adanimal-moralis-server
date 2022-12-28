@@ -295,7 +295,7 @@ const erc1155NFTTransfer = async (req: Request, res: Response) => {
         await ERC1155NFTTransfer.updateOne(transferQuery, transferUpdate, {upsert: true});
 
         // save metadata
-        const savedOne = await ERC1155NFTMetadata.findOne({ chainId: body.chainId, nftAddress: update.address, tokenId: update.id });
+        const savedOne = await ERC1155NFTMetadata.findOne({ chainId: body.chainId, nftAddress: update.address, tokenId: update.id, owner: update.to });
         if (!savedOne) {
           const metadata = new ERC1155NFTMetadata();
           metadata.chainId = body.chainId;
