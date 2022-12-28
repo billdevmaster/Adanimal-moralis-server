@@ -406,6 +406,8 @@ Parse.Cloud.define("getPairAddress", async ({params, user, ip}: any) => {
 Parse.Cloud.define("uploadFolder", async ({params, user, ip}: any) => {
   try {
     await beforeApiRequest(user, ip, 'uploadFolder');
+    delete params.address;
+    delete params.chain;
     const result = await Moralis.EvmApi.ipfs.uploadFolder(params);
     return result?.raw;
   } catch (error) {
