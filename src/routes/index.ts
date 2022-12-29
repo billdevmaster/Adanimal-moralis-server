@@ -20,6 +20,7 @@ ApiRoute.post("/setPodMerkletree", podMerkleCtrl.setPodMerkletree)
 ApiRoute.post("/getPodMerkletree", podMerkleCtrl.getPodMerkletree)
 
 ApiRoute.post("/getNkMainNfts", Erc721Ctrl.getNkMainNfts);
+ApiRoute.post("/getCountByTrait", Erc721Ctrl.getCountByTrait);
 ApiRoute.post("/getKampNfts", KampCtrl.getKampNfts);
 ApiRoute.post("/getErc1155Nfts", Erc1155Ctrl.getErc1155Nfts);
 ApiRoute.post("/getListedItems", MarketplaceCtrl.getListedItems);

@@ -2,7 +2,7 @@ import { ERC1155NFTMetadata } from '../models/ERC1155NFTMetadata';
 
 const getErc1155Nfts = async (req: any, res: any) => { 
   try { 
-    const { sort, sortDir, owner, nftAddress } = req.body;
+    const { sort, sortDir, owner, nftAddress, tokenId } = req.body;
     const pipeline: any = [
       {
         $lookup: {
@@ -85,6 +85,11 @@ const getErc1155Nfts = async (req: any, res: any) => {
     if (owner) {
 			let match: any = {};
 			match = { owner };
+			pipeline.splice(0, 0, { "$match": match });
+    }
+    if (tokenId != undefined) {
+			let match: any = {};
+			match = { tokenId };
 			pipeline.splice(0, 0, { "$match": match });
     }
     if (nftAddress != undefined) {

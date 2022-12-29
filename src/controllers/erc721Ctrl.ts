@@ -2,7 +2,7 @@ import { NKMainNFTMetadata } from '../models/NKMainNFTMetadata';
 
 const getNkMainNfts = async (req: any, res: any) => { 
 	try {
-		const { skip, limit, sort, sortDir, owner } = req.body;
+		const { skip, limit, sort, sortDir, owner, tokenId } = req.body;
 		const pipeline: any = [
 			{
 				$lookup: {
@@ -50,6 +50,11 @@ const getNkMainNfts = async (req: any, res: any) => {
 			match = { owner };
 			pipeline.splice(0, 0, { "$match": match });
 		}
+		if (tokenId != undefined) {
+			let match: any = {};
+			match = { tokenId };
+			pipeline.splice(0, 0, { "$match": match });
+		}
 		pipeline.push({ $count: 'totalCount' });
 		let totalCount = await NKMainNFTMetadata.aggregate(pipeline);
 		if (totalCount.length == 0) {
@@ -69,6 +74,8 @@ const getNkMainNfts = async (req: any, res: any) => {
 			pipeline.push({ "$limit": limit });
 		}
 
+
+
 		const retData = await NKMainNFTMetadata.aggregate(pipeline);
 
 		return res.status(200).json({status: "success", data: retData, totalCount})
@@ -78,6 +85,33 @@ const getNkMainNfts = async (req: any, res: any) => {
 	}
 }
 
+const getCountByTrait = async (req: any, res: any) => { 
+	try {
+		const { eyes, body, hair, horn, wings, tail, mouth } = req.body;
+		const eyesData = await NKMainNFTMetadata.count({eyes});
+		const bodyData = await NKMainNFTMetadata.count({body});
+		const hairData = await NKMainNFTMetadata.count({hair});
+		const hornData = await NKMainNFTMetadata.count({horn});
+		const wingsData = await NKMainNFTMetadata.count({wings});
+		const tailData = await NKMainNFTMetadata.count({tail});
+		const mouthData = await NKMainNFTMetadata.count({ mouth });
+		const retData = {
+			eyesCount: eyesData,
+			bodyCount: bodyData,
+			hairCount: hairData,
+			hornCount: hornData,
+			wingsCount: wingsData,
+			tailCount: tailData,
+			mouthCount: mouthData,
+		};
+		return res.status(200).json({status: "success", data: retData})
+	} catch (e) {
+		console.log(e)
+		return res.status(400).json({status: "failed"})
+	}
+}
+
 export default {
-	getNkMainNfts
+	getNkMainNfts,
+	getCountByTrait
 }
