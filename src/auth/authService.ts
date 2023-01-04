@@ -9,7 +9,7 @@ export interface RequestMessage {
 const DOMAIN = 'adanimal.lovelace';
 const STATEMENT = 'Please sign this message to confirm your identity.';
 const URI = 'https://adanimal.lovelace';
-const EXPIRATION_TIME = '2023-01-01T00:00:00.000Z';
+const EXPIRATION_TIME = '2024-01-01T00:00:00.000Z';
 const TIMEOUT = 15;
 
 export async function requestMessage({
