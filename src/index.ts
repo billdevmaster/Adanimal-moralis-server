@@ -33,25 +33,6 @@ app.use('/webhook', streamRoute);
 app.use('/api', ApiRoute);
 app.use('/game-api', GameApiRoute);
 
-
-// app.post('/webhooks/test', async (req: any, res: any) => {
-//   // eslint-disable-next-line no-console
-//   console.log(req.body);
-//   try {
-//     verifySignature(req, config.MORALIS_API_KEY);
-//     const { data, tagName, eventName }: any = parseEventData(req);
-//     // eslint-disable-next-line no-console
-//     console.log(data);
-//     // eslint-disable-next-line no-console
-//     console.log(tagName)
-//     await parseUpdate(`SFS_${eventName}`, data);
-//   } catch (e) {
-//     // eslint-disable-next-line no-console
-//     console.log(e);
-//   }
-//   res.send('ok');
-// });
-
 const httpServer = http.createServer(app);
 httpServer.listen(config.PORT, async () => {
   if (config.USE_STREAMS) {

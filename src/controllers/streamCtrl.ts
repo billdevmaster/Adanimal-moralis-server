@@ -131,7 +131,7 @@ const ERC721NftTransferCtrl = async (req: Request, res: Response) => {
             image: metadata.data.image,
           }
         }
-        await KampNFTMetadata.updateOne(metadataQuery, metadataUpdate, {upsert: true});
+        await KampNFTMetadata.updateOne(metadataQuery, metadataUpdate, { upsert: true });
       }
     }
     return res.status(200).json();

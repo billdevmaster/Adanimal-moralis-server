@@ -7,6 +7,7 @@ import KampCtrl from '../controllers/kampCtrl';
 import MarketplaceCtrl from '../controllers/marketplaceCtrl';
 import StyleKampCtrl from '../controllers/styleKampCtrl';
 import LootboxCtrl from '../controllers/lootboxCtrl';
+import MetadataCtrl from '../controllers/metadataCtrl';
 
 export const streamRoute = Router();
 streamRoute.post("/erc721NFTTransfer", streamCtrl.ERC721NftTransferCtrl);
@@ -35,6 +36,8 @@ ApiRoute.post("/styleKamp/getKampRankList", StyleKampCtrl.getKampRankList);
 
 ApiRoute.post("/lootbox/setLoot", LootboxCtrl.setLoot);
 ApiRoute.get("/lootbox/openLootbox", LootboxCtrl.openLootbox);
+
+ApiRoute.get("/metadata/updateCharacter", MetadataCtrl.updateCharacter);
 
 export const GameApiRoute = Router();
 GameApiRoute.post("/saveItems", KampCtrl.saveItems);
