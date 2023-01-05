@@ -38,6 +38,7 @@ ApiRoute.post("/lootbox/setLoot", LootboxCtrl.setLoot);
 ApiRoute.get("/lootbox/openLootbox", LootboxCtrl.openLootbox);
 
 ApiRoute.get("/metadata/updateCharacter", MetadataCtrl.updateCharacter);
+ApiRoute.get("/metadata/updateKamp", MetadataCtrl.updateKamp);
 
 export const GameApiRoute = Router();
 GameApiRoute.post("/saveItems", KampCtrl.saveItems);

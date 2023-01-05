@@ -29,6 +29,15 @@ const KampNFTMetadataSchema = new mongoose.Schema({
   items: {
     require: true,
     type: Array
+  },
+  likes: {
+    type: Number
+  },
+  wins: {
+    type: Number
+  },
+  legacy: {
+    type: Boolean
   }
 }, {timestamps: true});
 
