@@ -118,17 +118,25 @@ const ERC721NftTransferCtrl = async (req: Request, res: Response) => {
       } else if (update.address === address.POD_NFT_ADDRESS.toLowerCase()) {
         // save kamp nft metadata
         const metadataQuery = { nftAddress: update.address, tokenId: update.tokenId };
-        const tokenURI = Constant.KAMPNFT_BASE_URI + update.tokenId;
-        const metadata = await Axios.get(tokenURI);
-        const metadataUpdate = {
-          $set: {
-            nftAddress: update.address,
-            tokenId: update.tokenId,
-            owner: update.to,
-            name: metadata.data.name,
-            description: metadata.data.description,
-            externalUrl: metadata.data.external_url,
-            image: metadata.data.image,
+        const existKamp = await KampNFTMetadata.findOne(metadataQuery);
+        let metadataUpdate: any = {};
+        if (existKamp) {
+          metadataUpdate = {
+            $set: {
+              owner: update.to,
+            }
+          }
+        } else {
+          metadataUpdate = {
+            $set: {
+              nftAddress: update.address,
+              tokenId: update.tokenId,
+              owner: update.to,
+              name: "Kamp",
+              description: "Kamp NFT",
+              externalUrl: Constant.KAMPNFT_EXTERNAL_URI,
+              image: `${Constant.KAMPNFT_EXTERNAL_URI}1.webm`,
+            }
           }
         }
         await KampNFTMetadata.updateOne(metadataQuery, metadataUpdate, { upsert: true });
