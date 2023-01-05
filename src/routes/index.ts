@@ -37,8 +37,8 @@ ApiRoute.post("/styleKamp/getKampRankList", StyleKampCtrl.getKampRankList);
 ApiRoute.post("/lootbox/setLoot", LootboxCtrl.setLoot);
 ApiRoute.get("/lootbox/openLootbox", LootboxCtrl.openLootbox);
 
-ApiRoute.get("/metadata/updateCharacter", MetadataCtrl.updateCharacter);
-ApiRoute.get("/metadata/updateKamp", MetadataCtrl.updateKamp);
+ApiRoute.post("/metadata/updateCharacter", MetadataCtrl.updateCharacter);
+ApiRoute.post("/metadata/updateKamp", MetadataCtrl.updateKamp);
 
 export const GameApiRoute = Router();
 GameApiRoute.post("/saveItems", KampCtrl.saveItems);
