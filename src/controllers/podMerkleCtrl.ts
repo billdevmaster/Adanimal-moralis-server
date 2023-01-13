@@ -4,7 +4,7 @@ import { PodWhiteList } from '../models/PodWhiteList';
 
 const setPodMerkletree = async (req: any, res: any) => {
 	const leafNodes = req.body.whitelist.map((addr: any) => keccak256(addr));
-  const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true });
+  	const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true });
 	const merkleRoot = merkleTree.getHexRoot();
 	
 	await PodWhiteList.deleteMany();

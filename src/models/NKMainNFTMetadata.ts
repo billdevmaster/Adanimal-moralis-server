@@ -2,11 +2,9 @@ import mongoose from 'mongoose';
 
 const NKMainNFTMetadataSchema = new mongoose.Schema({
   owner: {
-    required: true,
     type: String,
   },
   nftAddress: {
-    required: true,
     type: String,
   },
   tokenId: {

@@ -37,6 +37,7 @@ ApiRoute.post("/styleKamp/getKampRankList", StyleKampCtrl.getKampRankList);
 ApiRoute.post("/lootbox/setLoot", LootboxCtrl.setLoot);
 ApiRoute.get("/lootbox/openLootbox", LootboxCtrl.openLootbox);
 
+ApiRoute.post("/metadata/setCharacter", MetadataCtrl.setCharacter);
 ApiRoute.post("/metadata/updateCharacter", MetadataCtrl.updateCharacter);
 ApiRoute.post("/metadata/updateKamp", MetadataCtrl.updateKamp);
 

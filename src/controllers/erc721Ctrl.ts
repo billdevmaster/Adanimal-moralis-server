@@ -74,8 +74,6 @@ const getNkMainNfts = async (req: any, res: any) => {
 			pipeline.push({ "$limit": limit });
 		}
 
-
-
 		const retData = await NKMainNFTMetadata.aggregate(pipeline);
 
 		return res.status(200).json({status: "success", data: retData, totalCount})
